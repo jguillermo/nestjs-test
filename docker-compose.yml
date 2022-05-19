@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  backend:
+    image: nestjs-app:v-6
+    build:
+      context: ./backend
+      target: development
+    command: firebase emulators:exec "npm run start:dev" --only firestore
+    ports:
+     - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app
+    networks:
+      api:
+        ipv4_address: 21.21.21.204
+
+  frontend:
+    image: angular-app:v-2
+    build:
+      context: ./frontend
+      target: development
+    command: ng serve --host 0.0.0.0
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/usr/src/app
+    networks:
+      api:
+        ipv4_address: 21.21.21.205
+
+networks:
+  api:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 21.21.21.0/24
+volumes:
+  certs:
+    driver: local

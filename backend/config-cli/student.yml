@@ -1,0 +1,9 @@
+path: src/student
+pathTest: test/infrastructure/student
+nameSpace: app.student
+name: Student
+properties:
+  id: id
+  name: string
+  email: string
+  createAt: date

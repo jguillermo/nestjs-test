@@ -1,0 +1,10 @@
+path: src/course
+pathTest: test/infrastructure/course
+nameSpace: app.course
+name: Course
+properties:
+  id: id
+  name: string
+  startAt: date
+  endAt: date
+  enrollments: number

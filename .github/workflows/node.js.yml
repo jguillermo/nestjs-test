@@ -1,0 +1,118 @@
+name: App Pipeline
+
+on:
+  push:
+    branches: [ feature/** ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  install-modules:
+    name: Install all dependencies
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ hashFiles('backend/Dockerfile') }}
+    - name: install dependencies
+      run: make install
+
+  format:
+    name: verify Format
+    runs-on: ubuntu-latest
+    needs: [install-modules]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('backend/Dockerfile') }}
+      - name: install dependencies
+        run: make install
+
+      - name: format
+        run: make format-check
+
+
+  lint:
+    name: verify Lint
+    runs-on: ubuntu-latest
+    needs: [install-modules]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('backend/Dockerfile') }}
+      - name: install dependencies
+        run: make install
+
+      - name: lint
+        run: make lint
+
+
+  unit-testing:
+    name: unit testing
+    runs-on: ubuntu-latest
+    needs: [install-modules]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('backend/Dockerfile') }}
+      - name: install dependencies
+        run: make install
+
+      - name: test
+        run: make test-unit
+
+  integration-testing:
+    name: integration testing
+    runs-on: ubuntu-latest
+    needs: [install-modules]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('backend/Dockerfile') }}
+      - name: install dependencies
+        run: make install
+
+      - name: test
+        run: make test-integration
+
+  bdd-testing:
+    name: bdd testing
+    runs-on: ubuntu-latest
+    needs: [install-modules]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('backend/Dockerfile') }}
+      - name: install dependencies
+        run: make install
+
+      - name: test
+        run: make test-bdd
+
+  build:
+    name: generate buid image
+    runs-on: ubuntu-latest
+    needs: [bdd-testing, integration-testing, unit-testing, lint, format]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: build
+        run: make build

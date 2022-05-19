@@ -1,0 +1,8 @@
+path: src/enrollment
+pathTest: test/infrastructure/enrollment
+nameSpace: app.enrollment
+name: Enrollment
+properties:
+  id: id
+  course: id
+  student: id
